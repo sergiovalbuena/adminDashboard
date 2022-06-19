@@ -3,6 +3,7 @@
     class="container"
     :class="{ 'light-background': !isDarkMode, 'dark-background': isDarkMode }"
   >
+    <NotificationSign v-if="hasText" v-bind:text="text" />
     <RequestAccount />
     <div class="login">
       <img
@@ -20,17 +21,23 @@
       <h4 :class="{ 'light-text': isDarkMode, 'dark-text': !isDarkMode }">
         Sign In
       </h4>
-      <input
-        type="email"
-        placeholder="Email"
-        :class="{ 'light-field': isDarkMode, 'dark-field': !isDarkMode }"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        :class="{ 'light-field': isDarkMode, 'dark-field': !isDarkMode }"
-      />
-      <button>Sign In</button>
+      <form @submit.prevent="onSubmit">
+        <input
+          type="email"
+          placeholder="Email"
+          :class="{ 'light-field': isDarkMode, 'dark-field': !isDarkMode }"
+          v-model="email"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          :class="{ 'light-field': isDarkMode, 'dark-field': !isDarkMode }"
+          v-model="password"
+          required
+        />
+        <button>Sign In</button>
+      </form>
       <router-link
         to="/recover"
         :class="{ 'light-link': isDarkMode, 'dark-link': !isDarkMode }"
@@ -45,9 +52,20 @@
 import "animate.css";
 import RequestAccount from "@/components/RequestAccount.vue";
 import ThemeSwitch from "@/components/ThemeSwitch.vue";
+//import * as netlifyIdentityWidget from "netlify-identity-widget";
+import { auth } from "@/main";
+import NotificationSign from "@/components/NotificationSign.vue";
 
 export default {
   name: "SignIn",
+  data() {
+    return {
+      email: null,
+      password: null,
+      hasText: false,
+      text: "",
+    };
+  },
   // data() {
   //   return {
   //     isDarkMode: this.$store.getters.isDarkMode,
@@ -56,11 +74,40 @@ export default {
   components: {
     RequestAccount,
     ThemeSwitch,
+    NotificationSign,
   },
   computed: {
     isDarkMode() {
       return this.$store.getters.isDarkMode;
     },
+  },
+  methods: {
+    toggleDarkMode() {
+      this.$store.commit("toggleDarkMode");
+    },
+    onSubmit() {
+      //alert("submitted!");
+      const email = this.email;
+      const password = this.password;
+      auth
+        .login(email, password, true)
+        .then(() => {
+          //alert("Response: " + response);
+          this.$router.replace("/");
+        })
+        .catch((err) => {
+          alert("Error: " + err);
+        });
+    },
+  },
+  mounted() {
+    //   netlifyIdentityWidget.open();
+    const params = this.$route.params;
+
+    if (params.useLoggedOut) {
+      this.hasText = true;
+      this.text = "You've logged out!";
+    }
   },
 };
 </script>
