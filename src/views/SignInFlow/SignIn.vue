@@ -3,13 +3,7 @@
     class="container"
     :class="{ 'light-background': !isDarkMode, 'dark-background': isDarkMode }"
   >
-    <div
-      class="request"
-      :class="{ 'light-request': isDarkMode, 'dark-request': !isDarkMode }"
-    >
-      Don't have an account?/
-      <router-link to="/request"> Request an account</router-link>
-    </div>
+    <RequestAccount />
     <div class="login">
       <img src="@/assets/logo.png" alt="logo" v-show="isDarkMode" />
       <img src="@/assets/logo-copy.png" alt="logo" v-show="!isDarkMode" />
@@ -30,25 +24,32 @@
       <router-link
         to="/recover"
         :class="{ 'light-link': isDarkMode, 'dark-link': !isDarkMode }"
-        >Forgot your password?</router-link
-      >
-      <button @click="toggleDarkMode">Toggle</button>
+        >Forgot your password?
+      </router-link>
+      <ThemeSwitch />
     </div>
   </div>
 </template>
 
 <script>
+import "animate.css";
+import RequestAccount from "@/components/RequestAccount.vue";
+import ThemeSwitch from "@/components/ThemeSwitch.vue";
+
 export default {
   name: "SignIn",
-  data() {
-    return {
-      isDarkMode: true,
-    };
+  // data() {
+  //   return {
+  //     isDarkMode: this.$store.getters.isDarkMode,
+  //   };
+  // },
+  components: {
+    RequestAccount,
+    ThemeSwitch,
   },
-  methods: {
-    toggleDarkMode() {
-      this.isDarkMode = !this.isDarkMode;
-      document.body.style.background = this.isDarkMode ? "#212c4f" : "#c6d0eb";
+  computed: {
+    isDarkMode() {
+      return this.$store.getters.isDarkMode;
     },
   },
 };
@@ -84,18 +85,7 @@ export default {
     color: rgba(0, 0, 0, 0.3);
   }
 }
-.light-request {
-  color: rgba(255, 255, 255, 0.3);
-  a {
-    color: white;
-  }
-}
-.dark-request {
-  color: rgba(0, 0, 0, 0.3);
-  a {
-    color: $black;
-  }
-}
+
 .container {
   display: flex;
   justify-content: center;
@@ -106,11 +96,7 @@ export default {
 .login {
   width: 400px;
 }
-.request {
-  position: absolute;
-  top: 40px;
-  right: 40px;
-}
+
 h4 {
   margin: 0;
   line-height: 34px;
