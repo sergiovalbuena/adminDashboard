@@ -124,10 +124,10 @@ export default {
   min-height: 100vh;
 }
 .login {
-  width: 400px;
+  width: 320px;
 }
 .logo {
-  width: 400px;
+  width: 320px;
   margin: 60px 0;
 }
 
